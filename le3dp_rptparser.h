@@ -26,6 +26,7 @@ class JoystickEvents
 
     uint8_t X;
     uint8_t Y;
+    uint32_t trigger;
 };
 
 #define RPT_GAMEPAD_LEN	sizeof(GamePadEventData)/sizeof(uint8_t)

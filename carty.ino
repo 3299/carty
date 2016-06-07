@@ -10,7 +10,7 @@ int maxJaguar = 2330;
 // Misc
 int output[] = {1500, 1500, 1500, 1500};
 
-int joyX, joyY;
+int joyX, joyY, joyT;
 
 int i;
 
@@ -61,13 +61,13 @@ void setup() {
 
   Serial.begin(9600);
 
+  delay(200);
+
   // Joystick
   Serial.println("Start");
 
   if (Usb.Init() == -1)
     Serial.println("OSC did not start.");
-
-  //delay(200);
 
   if (!Hid.SetReportParser(0, &Joy))
     ErrorMessage<uint8_t>(PSTR("SetReportParser"), 1  );
@@ -78,23 +78,47 @@ void loop() {
   Usb.Task();
   joyX = (int) JoyEvents.X;
   joyY = (int) JoyEvents.Y;
+  joyT = (int) JoyEvents.trigger;
 
-  joyY = map(joyY, 255, 192, 0, 255);
+  // Prevents movement on startup when joystick values haven't been received yet
+  if (joyX == 0 && joyY == 0) {
+    flM.writeMicroseconds(output[0]);
+    frM.writeMicroseconds(output[1]);
+    blM.writeMicroseconds(output[2]);
+    brM.writeMicroseconds(output[3]);
+    Serial.println("Waiting for joystick...");
+  }
+  else {
+    joyY = map(joyY, 192, 128, 0, 255);
 
-  // Calculate outputs
-  output[0] = joyY - joyX; //max: 255, min: -255
-  output[1] = 0 - joyY - joyX; // max: 0, min: -510
-  output[2] = 0 - joyY - joyX;
-  output[3] = joyY - joyX;
+    // Calculate outputs
+    if (joyT == 0) {
+      output[0] = joyY + joyX; //max: 510, min: 0
+      output[1] = 0 - joyX + joyY; // max: 255, min: -255
+      output[2] = 0 - joyX + joyY;
+      output[3] = joyY + joyX;
 
-  output[0] = map(output[0], -255, 255, minJaguar, maxJaguar);
-  output[1] = map(output[1], -510, 0, minJaguar, maxJaguar);
-  output[2] = map(output[2], -510, 0, minJaguar, maxJaguar);
-  output[3] = map(output[3], -255, 255, minJaguar, maxJaguar);
+      output[0] = map(output[0], 0, 510, minJaguar, maxJaguar);
+      output[1] = map(output[1], -255, 255, minJaguar, maxJaguar);
+      output[2] = map(output[2], -255, 255, minJaguar, maxJaguar);
+      output[3] = map(output[3], 0, 510, minJaguar, maxJaguar);
+    }
+    else if (joyT == 1) { // Trigger is pulled
+      output[0] = joyX;
+      output[1] = joyX;
+      output[2] = 0 - joyX;
+      output[3] = 0 - joyX;
 
-  // Run motors
-  flM.writeMicroseconds(output[0]);
-  frM.writeMicroseconds(output[1]);
-  blM.writeMicroseconds(output[2]);
-  brM.writeMicroseconds(output[3]);
+      output[0] = map(output[0], 0, 255, minJaguar, maxJaguar);
+      output[1] = map(output[1], 0, 255, minJaguar, maxJaguar);
+      output[2] = map(output[2], -255, 0, minJaguar, maxJaguar);
+      output[3] = map(output[3], -255, 0, minJaguar, maxJaguar);
+    }
+
+    // Run motors
+    flM.writeMicroseconds(output[0]);
+    frM.writeMicroseconds(output[1]);
+    blM.writeMicroseconds(output[2]);
+    brM.writeMicroseconds(output[3]);
+  }
 }

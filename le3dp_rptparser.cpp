@@ -42,4 +42,5 @@ void JoystickEvents::OnGamePadChanged(const GamePadEventData *evt)
     Serial.println("");*/
   X = evt->x;
   Y = evt->y;
+  trigger = evt->twist;
 }
