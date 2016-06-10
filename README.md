@@ -1,5 +1,5 @@
 # carty
-Wheelchair-like robot Just For Fun™
+Wheelchair-like robot Just For Fun™.
 
 Controlled by a joystick connected directly to an Arduino over a USB shield.
 Replaces the $1000+ FRC control system with a $30 Arduino + $18 shield.
