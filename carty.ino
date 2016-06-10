@@ -10,7 +10,13 @@ int maxJaguar = 2330;
 // Misc
 int output[] = {1500, 1500, 1500, 1500};
 
+boolean calibrating = true;
+
 int joyX, joyY, joyT;
+int maxX = 155;
+int minX = 155;
+int maxY = 155;
+int minY = 155;
 
 int i;
 
@@ -89,36 +95,56 @@ void loop() {
     Serial.println("Waiting for joystick...");
   }
   else {
-    joyY = map(joyY, 192, 128, 0, 255);
-
-    // Calculate outputs
-    if (joyT == 0) {
-      output[0] = joyY + joyX; //max: 510, min: 0
-      output[1] = 0 - joyX + joyY; // max: 255, min: -255
-      output[2] = 0 - joyX + joyY;
-      output[3] = joyY + joyX;
-
-      output[0] = map(output[0], 0, 510, minJaguar, maxJaguar);
-      output[1] = map(output[1], -255, 255, minJaguar, maxJaguar);
-      output[2] = map(output[2], -255, 255, minJaguar, maxJaguar);
-      output[3] = map(output[3], 0, 510, minJaguar, maxJaguar);
+    if (calibrating == true) { // Calibration
+      if (joyX > maxX) {
+        maxX = joyX;
+      }
+      if (joyX < minX) {
+        minX = joyX;
+      }
+      if (joyY > maxY) {
+        maxY = joyY;
+      }
+      if (joyY < minY) {
+        minY = joyY;
+      }
+      if (joyT == 1) {
+        calibrating == false;
+      }
     }
-    else if (joyT == 1) { // Trigger is pulled
-      output[0] = joyX;
-      output[1] = joyX;
-      output[2] = 0 - joyX;
-      output[3] = 0 - joyX;
+    else { // Normal operation
+      joyX = map(joyX, minX, maxX, 0, 255);
+      joyY = map(joyY, minY, minY, 0, 255);
 
-      output[0] = map(output[0], 0, 255, minJaguar, maxJaguar);
-      output[1] = map(output[1], 0, 255, minJaguar, maxJaguar);
-      output[2] = map(output[2], -255, 0, minJaguar, maxJaguar);
-      output[3] = map(output[3], -255, 0, minJaguar, maxJaguar);
+      // Calculate outputs
+      if (joyT == 0) { // forward, backward, and turning
+        output[0] = joyY + joyX;
+        output[1] = 0 - joyX + joyY;
+        output[2] = 0 - joyX + joyY;
+        output[3] = joyY + joyX;
+
+        output[0] = map(output[0], 0, 510, minJaguar, maxJaguar);
+        output[1] = map(output[1], -255, 255, minJaguar, maxJaguar);
+        output[2] = map(output[2], -255, 255, minJaguar, maxJaguar);
+        output[3] = map(output[3], 0, 510, minJaguar, maxJaguar);
+      }
+      else if (joyT == 1) { // Trigger is pulled -> sideways
+        output[0] = joyX;
+        output[1] = joyX;
+        output[2] = 0 - joyX;
+        output[3] = 0 - joyX;
+
+        output[0] = map(output[0], 0, 255, minJaguar, maxJaguar);
+        output[1] = map(output[1], 0, 255, minJaguar, maxJaguar);
+        output[2] = map(output[2], -255, 0, minJaguar, maxJaguar);
+        output[3] = map(output[3], -255, 0, minJaguar, maxJaguar);
+      }
+
+      // Run motors
+      flM.writeMicroseconds(output[0]);
+      frM.writeMicroseconds(output[1]);
+      blM.writeMicroseconds(output[2]);
+      brM.writeMicroseconds(output[3]);
     }
-
-    // Run motors
-    flM.writeMicroseconds(output[0]);
-    frM.writeMicroseconds(output[1]);
-    blM.writeMicroseconds(output[2]);
-    brM.writeMicroseconds(output[3]);
   }
 }
