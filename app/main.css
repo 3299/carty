@@ -1,0 +1,86 @@
+/*-- Font --*/
+@font-face {
+  font-family: 'Lato';
+  src: url('fonts/lato-hairline-webfont.woff2') format('woff2'),
+    url('fonts/lato-hairline-webfont.woff') format('woff');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lato';
+  src: url('fonts/lato-light-webfont.woff2') format('woff2'),
+    url('fonts/lato-light-webfont.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+/*-- Global styles --*/
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  background-color: #141619;
+  color: white;
+
+  font-family: 'Lato';
+}
+
+button {
+  outline: none;
+  border: none;
+}
+
+/*-- Intro container styles --*/
+#intro {
+  width: 40%;
+  text-align: center;
+  font-weight: 100;
+  font-size: 500%;
+}
+
+#intro b {
+  color: #bd2df5;
+}
+
+#intro > button {
+  font-size: 90%;
+  width: 100%;
+  font-weight: 300;
+  padding: 1vw;
+  border-radius: 0.3vw;
+
+  background-color: #28b78d;
+}
+
+#intro > button:active {
+  background-color: #bd2df5;
+  color: white;
+}
+
+/*-- Main container styles --*/
+#main {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+#main > button {
+  width: 100%;
+  height: 100%;
+
+  background-color: #feab3a;
+}
+
+#main > button:active {
+  background-color: #ff5964;
+}
