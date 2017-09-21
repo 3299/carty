@@ -1,11 +1,3 @@
-# Simple demo of of the PCA9685 PWM servo/LED controller library.
-# This will move channel 0 from min to max position repeatedly.
-# Author: Tony DiCola
-# License: Public Domain
-from __future__ import division
-import time
-from inputs import get_gamepad
-
 # Import the PCA9685 module.
 import Adafruit_PCA9685
 
@@ -80,34 +72,13 @@ def drive(value):
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 
 class Log(WebSocket):
-	def handleMessage(self):
+    def handleMessage(self):
         print(self.data)
-		#drive(self.data)
-	def handleConencted(self):
-		print self.address, 'connected'
-	def handleClose(self):
-		print self.address, 'closed'
+        #drive(self.data)
+    def handleConencted(self):
+        print(self.address, 'connected')
+    def handleClose(self):
+        print(self.address, 'closed')
 
 server = SimpleWebSocketServer('', 8000, Log)
 server.serveforever()
-
-'''
-Regular joystick driving
-'''
-'''
-lastValue = {'x': 127, 'y': 127}
-while 1:
-    events = get_gamepad()
-    for event in events:
-        if (event.code == 'ABS_Y'):
-            print('Y: ', event.state)
-            lastValue['y'] = - int(remap(event.state, 0, 255, jaguarMin, jagaurMax))
-        elif (event.code == 'ABS_X'):
-            print('X: ', event.state)
-            lastValue['x'] = int(remap(event.state, 0, 255, jaguarMin, jagaurMax))
-
-    pwm.set_pwm(0, 0, int((lastValue['x'] + lastValue['y'])/2))
-    pwm.set_pwm(0, 1, int((-lastValue['x'] + lastValue['y'])/2))
-    pwm.set_pwm(0, 2, int((-lastValue['x'] + lastValue['y'])/2))
-    pwm.set_pwm(0, 3, int((lastValue['x'] + lastValue['y'])/2))
-'''
