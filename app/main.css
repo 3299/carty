@@ -84,3 +84,9 @@ button {
 #main > button:active {
   background-color: #ff5964;
 }
+
+#main > .direction-arrow {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
