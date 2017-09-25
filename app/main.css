@@ -42,14 +42,20 @@ button {
 
 /*-- Intro container styles --*/
 #intro {
-  width: 40%;
+  width: 80%;
   text-align: center;
   font-weight: 100;
-  font-size: 500%;
+}
+
+#intro p {
+  margin: 0;
+  margin-bottom: 1rem;
 }
 
 #intro b {
   color: #bd2df5;
+  font-family: 'Lato';
+  font-weight: 300;
 }
 
 #intro > button {
@@ -57,9 +63,11 @@ button {
   width: 100%;
   font-weight: 300;
   padding: 1vw;
-  border-radius: 0.3vw;
+  border-radius: 5px;
+  letter-spacing: 1px;
 
   background-color: #28b78d;
+  color: white;
 }
 
 #intro > button:active {
@@ -74,14 +82,14 @@ button {
   height: 100%;
 }
 
-#main > button {
-  width: 100%;
+#main > .move {
   height: 100%;
+  flex: 1 1 auto;
 
   background-color: #feab3a;
 }
 
-#main > button:active {
+#main > .move.active {
   background-color: #ff5964;
 }
 
