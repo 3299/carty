@@ -21,7 +21,6 @@ $(document).ready(function() {
   }
 
   function moveBot(tap) {
-    console.log(tap['rotation']);
     // Compute values for wheels
     var wheels = [];
 
@@ -100,6 +99,11 @@ $(document).ready(function() {
       }
     }
 
+    if (!direction['x']) {
+      direction['x'] = 0;
+      direction['y'] = 0;
+    }
+
     if (!direction['rotation']) {
       direction['rotation'] = 0;
     }
@@ -112,11 +116,5 @@ $(document).ready(function() {
     if (e.originalEvent.touches.length == 0) { // only if no fingers are touching
       moveBot({x: 0, y: 0, rotation: 0}); // stop the bot
     }
-  });
-
-  // Hide intro when 'done' is clicked
-  $('.calibrate-button').click(function(e) {
-    $('#intro').hide();
-    $('#main').css('display', 'flex');
   });
 });

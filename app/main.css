@@ -1,17 +1,9 @@
 /*-- Font --*/
 @font-face {
   font-family: 'Lato';
-  src: url('fonts/lato-hairline-webfont.woff2') format('woff2'),
-    url('fonts/lato-hairline-webfont.woff') format('woff');
-  font-weight: 100;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Lato';
-  src: url('fonts/lato-light-webfont.woff2') format('woff2'),
-    url('fonts/lato-light-webfont.woff') format('woff');
-  font-weight: 300;
+  src: url('fonts/lato-black-webfont.woff2') format('woff2'),
+       url('fonts/lato-black-webfont.woff') format('woff');
+  font-weight: 900;
   font-style: normal;
 }
 
@@ -30,67 +22,38 @@ body {
   overflow: hidden;
 
   background-color: #141619;
-  color: white;
-
-  font-family: 'Lato';
-}
-
-button {
-  outline: none;
-  border: none;
-}
-
-/*-- Intro container styles --*/
-#intro {
-  width: 80%;
-  text-align: center;
-  font-weight: 100;
-}
-
-#intro p {
-  margin: 0;
-  margin-bottom: 1rem;
-}
-
-#intro b {
-  color: #bd2df5;
-  font-family: 'Lato';
-  font-weight: 300;
-}
-
-#intro > button {
-  font-size: 90%;
-  width: 100%;
-  font-weight: 300;
-  padding: 1vw;
-  border-radius: 5px;
-  letter-spacing: 1px;
-
-  background-color: #28b78d;
-  color: white;
-}
-
-#intro > button:active {
-  background-color: #bd2df5;
-  color: white;
 }
 
 /*-- Main container styles --*/
 #main {
-  display: none;
+  display: flex;
   width: 100%;
   height: 100%;
 }
 
 #main > .move {
+  display: inline-block;
   height: 100%;
   flex: 1 1 auto;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
 
-  background-color: #feab3a;
+  outline: none;
+  border: none;
+  font-size: 3rem;
+  color: white;
+
+  font-family: 'Lato';
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-align: center;
+
+  background-color: #141619;
 }
 
-#main > .move.active {
-  background-color: #ff5964;
+#main .move:active {
+  background-color: #00a7e1;
 }
 
 #main > .direction-arrow {
