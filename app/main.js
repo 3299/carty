@@ -16,18 +16,18 @@ function radiansToDegrees(angle) {
 $(document).ready(function() {
   // WebSocket
   var serverSocket = new WebSocket('ws://3299vision.local:8000/');
-  serverSocket.onopen = function(event) {
-    serverSocket.send('connected');
+  serverSocket.onopen = function(e) {
+    serverSocket.send('{"message": "connected"}');
   }
 
   function moveBot(tap) {
     // Compute values for wheels
     var wheels = [];
 
-    wheels[0] = round(tap['x'] + tap['y'] + tap['rotation'], 3);  // front left
-    wheels[1] = round(-tap['x'] + tap['y'] - tap['rotation'], 3); // front right
-    wheels[2] = round(-tap['x'] + tap['y'] + tap['rotation'], 3); // back left
-    wheels[3] = round(tap['x'] + tap['y'] - tap['rotation'], 3);  // back right
+    wheels[0] =  tap['x'] + tap['y'] + tap['rotation']; // front left
+    wheels[1] = -tap['x'] + tap['y'] - tap['rotation']; // front right
+    wheels[2] = -tap['x'] + tap['y'] + tap['rotation']; // back left
+    wheels[3] =  tap['x'] + tap['y'] - tap['rotation']; // back right
 
     // Normalize values
     var maxMagnitude = 0;
@@ -42,11 +42,30 @@ $(document).ready(function() {
         wheels[i] = wheels[i] / maxMagnitude;
       }
     }
-    console.log(wheels)
-    //serverSocket.send(wheels['frontLeft']);
+
+    // round all values
+    for (var i = 0; i <= 3; i++) {
+      wheels[i] = round(wheels[i], 2);
+    }
+    
+    serverSocket.send(JSON.stringify(wheels));
   }
 
-  $('#main').bind("touchstart touchmove", function(e) {
+  $('.move').bind('touchstart', function(e) {
+    // Check for correctly opened WebSocket
+    if (serverSocket.readyState == 0) {
+      alert('Sorry, something went wrong.');
+      return;
+    }
+
+    $(this).addClass('active');
+  });
+
+  $('.move').bind('touchend', function(e) {
+    $(this).removeClass('active');
+  });
+
+  $('#main').bind('touchstart touchmove', function(e) {
     //Disable scrolling by preventing default touch behaviour
     e.preventDefault();
     var orig = e.originalEvent;
@@ -59,7 +78,8 @@ $(document).ready(function() {
       var topLeft = element.position();
       var width = element.width();
       var height = element.height();
-      var padding = 100;
+      var paddingX = 80;
+      var paddingY = 150;
 
       var center = {x: topLeft['left'] + (width / 2), y: topLeft['top'] + (height / 2)};
       var tap = {x: orig.touches[i].pageX, y: orig.touches[i].pageY};
@@ -67,28 +87,28 @@ $(document).ready(function() {
       /*****/
       /* X */
       /*****/
-      if (tap['x'] > (center['x'] + (width / 2) - padding)) {
-        tap['x'] = (center['x'] + (width / 2) - padding);
+      if (tap['x'] > (center['x'] + (width / 2) - paddingX)) {
+        tap['x'] = (center['x'] + (width / 2) - paddingX);
       }
-      else if (tap['x'] < (center['x'] - (width / 2) + padding)) {
-        tap['x'] = (center['x'] - (width / 2) + padding);
+      else if (tap['x'] < (center['x'] - (width / 2) + paddingX)) {
+        tap['x'] = (center['x'] - (width / 2) + paddingX);
       }
 
       /*****/
       /* Y */
       /*****/
-      if (tap['y'] > (center['y'] + (height / 2) - padding)) {
-        tap['y'] = (center['y'] + (height / 2) - padding);
+      if (tap['y'] > (center['y'] + (height / 2) - paddingY)) {
+        tap['y'] = (center['y'] + (height / 2) - paddingY);
       }
-      else if (tap['y'] < (center['y'] - (height / 2) + padding)) {
-        tap['y'] = (center['y'] - (height / 2) + padding);
+      else if (tap['y'] < (center['y'] - (height / 2) + paddingY)) {
+        tap['y'] = (center['y'] - (height / 2) + paddingY);
       }
 
       /*********/
       /* remap */
       /*********/
-      tap['x'] = remap(tap['x'], (center['x'] - (width / 2) + padding), (center['x'] + (width / 2) - padding), -1, 1);
-      tap['y'] = remap(tap['y'], (center['y'] - (height / 2) + padding), (center['y'] + (height / 2) - padding), 1, -1);
+      tap['x'] = remap(tap['x'], (center['x'] - (width / 2) + paddingX), (center['x'] + (width / 2) - paddingX), -1, 1);
+      tap['y'] = remap(tap['y'], (center['y'] - (height / 2) + paddingY), (center['y'] + (height / 2) - paddingY), 1, -1);
 
       if (element.attr('id') == 'translation-drive') {
         direction = {x: tap['x'], y: tap['y']};
