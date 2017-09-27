@@ -1,6 +1,8 @@
 # Import the PCA9685 module.
 import Adafruit_PCA9685
 
+import json
+
 # Initialise the PCA9685 using the default address (0x40).
 pwm = Adafruit_PCA9685.PCA9685()
 
@@ -51,34 +53,28 @@ def remap( x, oMin, oMax, nMin, nMax ): # thanks stackoverflow.com/a/15537393
 '''
 Webapp-based driving.
 '''
-def drive(value):
-    print(value)
-    if (value == 'FORWARD'):
-        pwm.set_pwm(0, 0, jagaurMax)
-        pwm.set_pwm(0, 1, jagaurMax)
-        pwm.set_pwm(0, 2, jagaurMax)
-        pwm.set_pwm(0, 3, jagaurMax)
-    elif (value == 'BACKWARD'):
-        pwm.set_pwm(0, 0, jagaurMin)
-        pwm.set_pwm(0, 1, jagaurMin)
-        pwm.set_pwm(0, 2, jagaurMin)
-        pwm.set_pwm(0, 3, jagaurMin)
-    else:
-        pwm.set_pwm(0, 0, 390)
-        pwm.set_pwm(0, 1, 390)
-        pwm.set_pwm(0, 2, 390)
-        pwm.set_pwm(0, 3, 390)
+def drive(wheels):
+    i = 0
+    for wheel in wheels:
+        pwm.set_pwm(0, i, int(remap(wheel, -1, 1, jaguarMin, jagaurMax)))
+        i = i + 1
+
+drive([0,0,0,0])
 
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 
 class Log(WebSocket):
     def handleMessage(self):
-        print(self.data)
-        #drive(self.data)
+        # drive
+        drive(json.loads(self.data))
+
     def handleConencted(self):
         print(self.address, 'connected')
+
     def handleClose(self):
         print(self.address, 'closed')
+        # stop bot
+        drive([0,0,0,0])
 
-server = SimpleWebSocketServer('', 8000, Log)
+server = SimpleWebSocketServer('', 8080, Log)
 server.serveforever()

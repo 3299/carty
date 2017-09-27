@@ -15,10 +15,7 @@ function radiansToDegrees(angle) {
 
 $(document).ready(function() {
   // WebSocket
-  var serverSocket = new WebSocket('ws://3299vision.local:8000/');
-  serverSocket.onopen = function(e) {
-    serverSocket.send('{"message": "connected"}');
-  }
+  var serverSocket = new ReconnectingWebSocket('ws://carty.local:8080/');
 
   function moveBot(tap) {
     // Compute values for wheels
@@ -47,13 +44,13 @@ $(document).ready(function() {
     for (var i = 0; i <= 3; i++) {
       wheels[i] = round(wheels[i], 2);
     }
-    
+
     serverSocket.send(JSON.stringify(wheels));
   }
 
   $('.move').bind('touchstart', function(e) {
     // Check for correctly opened WebSocket
-    if (serverSocket.readyState == 0) {
+    if (serverSocket.readyState != 1) {
       alert('Sorry, something went wrong.');
       return;
     }

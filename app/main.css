@@ -55,12 +55,6 @@ body {
   background-color: #141619;
 }
 
-#main .move > span {
-  display: inline-block;
-  vertical-align: middle;
-  line-height: normal;
-}
-
 #main .move.active {
   background-color: #00a7e1;
 }
